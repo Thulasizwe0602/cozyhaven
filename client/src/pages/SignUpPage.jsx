@@ -7,9 +7,8 @@ export default function SignUpPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    async function signUpUser(event){
+    async function handleSignUpUser(event){
         event.preventDefault();
-
         try{
             await axios.post('/signup',{
                 name,
@@ -20,11 +19,12 @@ export default function SignUpPage() {
             alert(e.response.data.errorMessage)
         }
     }
+    
     return (
         <div className="mt-4 grow flex items-center justify-around">
             <div className="mb-80">
             <h1 className="text-4xl text-center mb-4 font-bold">Sign Up</h1>
-            <form className="max-w-md mx-auto" onSubmit={signUpUser}>
+            <form className="max-w-md mx-auto" onSubmit={handleSignUpUser}>
                 <input type='text' placeholder='Name' value={name} onChange={ev => setName(ev.target.value)}/>
                 <input type='email' placeholder='Email address' value={email} onChange={ev => setEmail(ev.target.value)}/>
                 <input type='password' placeholder='Password' value={password} onChange={ev => setPassword(ev.target.value)}/>
