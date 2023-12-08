@@ -1,12 +1,16 @@
-import { Link } from "react-router-dom";
-import { useState } from 'react';
+import { Link, Navigate, redirect } from "react-router-dom";
+import { useContext, useState } from 'react';
 import axios from "axios";
+import { UserContext } from "../UserContext.jsx";
+
 
 export default function SignInPage() {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
+    const [redirect, setRedirect] = useState(false);
+    const {setUser} = useContext(UserContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -16,12 +20,17 @@ export default function SignInPage() {
     const handleSignInUser = async (event) => {
         event.preventDefault();
         try {
-            await axios.post('/signin', formData);
+            const {data} = await axios.post('/signin', formData);
+            setUser(data);
+            setRedirect(true);
         } catch (error) {
-            alert(error);
+            console.log(error)
         }
     };
 
+    if (redirect) {
+        return <Navigate to={'/'} />
+    }
     return (
         <div className="mt-4 grow flex items-center justify-around">
             <div className="mb-80">

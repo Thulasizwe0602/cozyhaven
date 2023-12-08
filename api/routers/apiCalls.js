@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User.js');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 const jwtSecret = 'cozyhaven';

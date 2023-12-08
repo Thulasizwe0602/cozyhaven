@@ -21,7 +21,7 @@ export default function SignUpPage() {
         try {
             await axios.post('/signup', formData);
         } catch (error) {
-            alert(error.response.data.errorMessage);
+            console.log(error);
         }
     };
 
