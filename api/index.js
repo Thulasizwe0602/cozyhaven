@@ -55,11 +55,11 @@ app.post('/signin', async (request, response) => {
       if (userDoc) {
         const validPassword = bcrypt.compareSync(password, userDoc.password);
         if (validPassword) {
-          jwt.sign({ email: userDoc.email, id: userDoc._id }, jwtSecret, {}, (error, token) => {
+          jwt.sign({ name: userDoc.name, email: userDoc.email, id: userDoc._id }, jwtSecret, {}, (error, token) => {
             if (error) {
               throw error;
             }
-            response.cookie('token', token).status(200).json({ email: userDoc.email, id: userDoc._id });
+            response.cookie('token', token).status(200).json({ email: userDoc.email, id: userDoc._id, name: userDoc.name });
           });
         } else {
           response.status(400).json({ message: 'Incorrect email or password!!' });
@@ -70,6 +70,15 @@ app.post('/signin', async (request, response) => {
     }
   } catch (error) {
     console.error('Error during user creation:', error);
+    response.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+  }
+});
+
+app.post('/signout', async (request, response) => {
+  try {
+    response.cookie('token', '').json(true);
+  } catch (error) {
+    console.error('Error during signin out', error);
     response.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
   }
 });
@@ -85,7 +94,7 @@ app.get('/profile', (request, response) => {
       response.json({id, name, email});
     })
   } else {
-    response.json(null);
+    response.json('null');
   }
 });
 
