@@ -98,6 +98,8 @@ app.get('/profile', (request, response) => {
   }
 });
 
+app.post('/uploadByLink')
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
