@@ -45,7 +45,7 @@ export default function AccomodationPage() {
                         indoorFeatures: updatedIndoorFeatures,
                     };
                 case'outdoorFeatures':
-                    let updatedOutdoorFeatures = prevFormData.outdoorFeatures;            
+                    let updatedOutdoorFeatures = prevFormData.outdoorFeatures;
                     if (checked) {
                         updatedOutdoorFeatures = [...prevFormData.outdoorFeatures, value];
                     } else {
