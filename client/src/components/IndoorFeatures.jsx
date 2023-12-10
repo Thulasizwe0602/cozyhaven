@@ -1,14 +1,15 @@
-export default function Features({selectedFeatures, onChange}) {
+export default function IndoorFeatures({selectedIndoor, onChange}) {
     return (
         <>
-            <h2 className="text-2xl mt-4">Features</h2>
+            <h2 className="text-2xl mt-4">Indoor Features</h2>
             <div className="mt-2 grid gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                 <label className="border p-4 flex round gap-2 items-center">
                     <input 
-                        type="checkbox" 
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
                         name="wifi"
                         value= "Wifi – 47 Mbps"
-                        checked={selectedFeatures.includes('Wifi – 47 Mbps')}
+                        checked={selectedIndoor.includes('Wifi – 47 Mbps')}
                         onChange={onChange}
                     />
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
@@ -18,10 +19,11 @@ export default function Features({selectedFeatures, onChange}) {
                 </label>
                 <label className="border p-4 flex round gap-2 items-center">
                     <input
-                        type="checkbox" 
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
                         name="kitchen"
                         value= "Kitchen"
-                        checked={selectedFeatures.includes('Kitchen')}
+                        checked={selectedIndoor.includes('Kitchen')}
                         onChange={onChange}
                         />
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
@@ -31,36 +33,11 @@ export default function Features({selectedFeatures, onChange}) {
                 </label>
                 <label className="border p-4 flex round gap-2 items-center">
                     <input
-                        type="checkbox" 
-                        name="cameras"
-                        value= "Security cameras on property"
-                        checked={selectedFeatures.includes('Security cameras on property')}
-                        onChange={onChange}
-                        />
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                    <span>Security cameras on property</span>
-                </label>
-                <label className="border p-4 flex round gap-2 items-center">
-                    <input
-                        type="checkbox" 
-                        name="parking"
-                        value= "Free parking on premises"
-                        checked={selectedFeatures.includes('Free parking on premises')}
-                        onChange={onChange}
-                        />
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                    </svg>
-                    <span>Free parking on premises</span>
-                </label>
-                <label className="border p-4 flex round gap-2 items-center">
-                    <input
-                        type="checkbox" 
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
                         name="airConditioner"
                         value= "Air conditioning"
-                        checked={selectedFeatures.includes('Air conditioning')}
+                        checked={selectedIndoor.includes('Air conditioning')}
                         onChange={onChange}
                         />
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
@@ -70,16 +47,45 @@ export default function Features({selectedFeatures, onChange}) {
                 </label>
                 <label className="border p-4 flex round gap-2 items-center">
                     <input
-                        type="checkbox" 
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
                         name="netflix"
-                        value= "63 HDTV with Netflix"
-                        checked={selectedFeatures.includes('63" HDTV with Netflix')}
+                        value= "63 inch HDTV with Netflix"
+                        checked={selectedIndoor.includes('63 inch HDTV with Netflix')}
                         onChange={onChange}
                         />
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" />
                     </svg>
                     <span>63 inch HDTV with Netflix</span>
+                </label>
+                <label className="border p-4 flex round gap-2 items-center">
+                    <input
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
+                        name="gaming"
+                        value= "Game console: PS4"
+                        checked={selectedIndoor.includes('Game console: PS4')}
+                        onChange={onChange}
+                        />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    <span>Game console: PS4</span>
+                </label>
+                <label className="border p-4 flex round gap-2 items-center">
+                    <input
+                        type="checkbox"
+                        data-extra-info ="indoorFeatures"
+                        name="wash"
+                        value= "Free washer – In building"
+                        checked={selectedIndoor.includes('Free washer – In building')}
+                        onChange={onChange}
+                        />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    <span>Free washer – In building</span>
                 </label>
             </div>
         </>

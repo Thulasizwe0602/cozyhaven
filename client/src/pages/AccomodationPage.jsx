@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Features from "../components/Features";
+import IndoorFeatures from "../components/IndoorFeatures";
+import OutdoorFeatures from "../components/OutdoorFeatures";
 import axios from "axios";
 
 export default function AccomodationPage() {
     const { action } = useParams();
-    console.log(action)
     const [formData, setFormData] = useState({
         title: '',
         address: '',
@@ -17,22 +17,47 @@ export default function AccomodationPage() {
         maxGuest: 3,
         photoLink: '',
         addedPhotos: [],
-        features: []
+        indoorFeatures: [],
+        outdoorFeatures: [],
     });
     // const [addedPhotos, setAddedPhotos] = useState([]);
-    // const [features, setFeatures] = useState([]);
+    // const [indoorFeatures, setFeatures] = useState([]);
     //const [photoLink, setPhotoLink] = useState('');
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value, type, checked, dataset } = e.target;
 
         if (type === 'checkbox') {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                features: checked
-                    ? [...prevFormData.features, value]
-                    : prevFormData.features.filter((feature) => feature !== value)
-            }));
+            setFormData((prevFormData) => {
+              let componentName = dataset.extraInfo;
+              
+              switch(componentName){
+                case'indoorFeatures':
+                    let updatedIndoorFeatures = prevFormData.indoorFeatures;            
+                    if (checked) {
+                        updatedIndoorFeatures = [...prevFormData.indoorFeatures, value];
+                    } else {
+                        updatedIndoorFeatures = prevFormData.indoorFeatures.filter((feature) => feature !== value);
+                    }
+
+                    return {
+                        ...prevFormData,
+                        indoorFeatures: updatedIndoorFeatures,
+                    };
+                case'outdoorFeatures':
+                    let updatedOutdoorFeatures = prevFormData.outdoorFeatures;            
+                    if (checked) {
+                        updatedOutdoorFeatures = [...prevFormData.outdoorFeatures, value];
+                    } else {
+                        updatedOutdoorFeatures = prevFormData.outdoorFeatures.filter((feature) => feature !== value);
+                    }
+                    
+                return {
+                    ...prevFormData,
+                    outdoorFeatures: updatedOutdoorFeatures,
+                };
+              }
+            });
         } else {
             setFormData((prevData) => ({ ...prevData, [name]: value }));
         }
@@ -138,7 +163,8 @@ export default function AccomodationPage() {
                             value={formData.description}
                             onChange={handleChange}
                         />
-                        <Features selectedFeatures={formData.features} onChange={handleChange} />
+                        <IndoorFeatures selectedIndoor={formData.indoorFeatures} onChange={handleChange} />
+                        <OutdoorFeatures selectedOutdoor={formData.outdoorFeatures} onChange={handleChange} />
                         <h2 className="text-2xl mt-4">Extra Info</h2>
                         <textarea
                             type="text"
