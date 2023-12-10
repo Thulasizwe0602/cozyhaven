@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const imageDownloader = require('image-downloader');
 
 const User = require('./models/User.js');
 
@@ -20,6 +21,7 @@ const CORS_OPTIONS = {
 
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(cors(CORS_OPTIONS));
 
 mongoose.connect(process.env.MONGO_URL);
@@ -98,7 +100,16 @@ app.get('/profile', (request, response) => {
   }
 });
 
-app.post('/uploadByLink')
+app.post('/uploadByLink', async (request, response) =>{
+  const {imageLink} = request.body;
+  const newImageName = 'photo'+ Date.now() + '.jpg';
+  const imagePath = __dirname + '/uploads/' + newImageName;
+  await imageDownloader.image({
+    url: imageLink,
+    dest: imagePath
+  })
+  response.json(newImageName);
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

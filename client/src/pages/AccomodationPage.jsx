@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Features from "../components/Features";
+import axios from "axios";
+
 export default function AccomodationPage() {
     const { action } = useParams();
     console.log(action)
@@ -14,18 +16,42 @@ export default function AccomodationPage() {
         checkOut: '',
         maxGuest: 3,
         photoLink: '',
+        addedPhotos: [],
+        features:  []
     });
-    const [addedPhotos, setAddedPhotos] = useState([]);
-    const [features, setFeatures] = useState([]);
+    // const [addedPhotos, setAddedPhotos] = useState([]);
+    // const [features, setFeatures] = useState([]);
+    //const [photoLink, setPhotoLink] = useState('');
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        const { name, value, type, checked } = e.target;
+
+        if(type === 'checkbox') {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                features: checked
+                  ? [...prevFormData.features, value]
+                  : prevFormData.features.filter((feature) => feature !== value)
+              }));
+        }else{
+            setFormData((prevData) => ({ ...prevData, [name]: value }));
+        }
     };
 
-    function addPhotoByLink(){
-        
-    }
+    async function addPhotoByLink(event){
+        event.preventDefault();
+        const {data: fileName} = await axios.post('/uploadByLink', {imageLink : formData.photoLink});
+        if(fileName) {
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              addedPhotos: [...prevFormData.addedPhotos, fileName],
+              photoLink: '' // Optional: Clear the photoLink input after adding to the array
+            }));
+        }
+
+        let newArry = formData.addedPhotos;
+    };
+
     return (
         <div>
             {action !== 'new' && (
@@ -67,14 +93,18 @@ export default function AccomodationPage() {
                                 value={formData.photoLink}
                                 onChange={handleChange}
                             />
-                            <button className='bg-gray-100 px-2 rounded-2xl'>Upload&nbsp;Photo</button>
+                            <button onClick={addPhotoByLink} className='bg-gray-100 px-2 rounded-2xl'>Upload&nbsp;Photo</button>
                         </div>
                         <div className="mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                            {formData.addedPhotos.length > 0 && formData.addedPhotos.map(imageLink => (
+                                <div>
+                                    <img src={'http://localhost:3000/uploads/' + imageLink}/>
+                                </div>
+                            ))}
                             <button className='flex gap-1 justify-center border bg-transparent rounded-2xl p-6  text-2xl text-primary'>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-9">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                                 </svg>
-
                                 Upload</button>
                         </div>
                         <h2 className="text-2xl mt-4">Description</h2>
@@ -85,7 +115,7 @@ export default function AccomodationPage() {
                             value={formData.description}
                             onChange={handleChange}
                         />
-                        <Features selectedFeatures={features} onChange={setFeatures}/>
+                        <Features selectedFeatures={formData.features} onChange={handleChange}/>
                         <h2 className="text-2xl mt-4">Extra Info</h2>
                         <textarea
                             type="text"
