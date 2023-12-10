@@ -5,7 +5,9 @@ const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const imageDownloader = require('image-downloader');
+const multer = require('multer');
+const fs = require('fs');
+const imagedownloader = require('image-downloader');
 
 const User = require('./models/User.js');
 
@@ -92,23 +94,39 @@ app.get('/profile', (request, response) => {
       if (error) {
         throw error;
       }
-      const {id, name, email} = await User.findById(cookieUserData.id);
-      response.json({id, name, email});
+      const { id, name, email } = await User.findById(cookieUserData.id);
+      response.json({ id, name, email });
     })
   } else {
     response.json('null');
   }
 });
 
-app.post('/uploadByLink', async (request, response) =>{
-  const {imageLink} = request.body;
-  const newImageName = 'photo'+ Date.now() + '.jpg';
+app.post('/uploadByLink', async (request, response) => {
+  const { imageLink } = request.body;
+  const newImageName = 'photo' + Date.now() + '.jpg';
   const imagePath = __dirname + '/uploads/' + newImageName;
-  await imageDownloader.image({
+  await imagedownloader.image({
     url: imageLink,
     dest: imagePath
   })
   response.json(newImageName);
+})
+
+const photoMiddleware = multer({ dest: 'uploads/' });
+app.post('/uploadPhotos', photoMiddleware.array('photos', 100), async (request, response) => {
+const uploadedFiles =[];
+console.log(request.files[0]);
+  for (let i = 0; i < request.files.length; i++) {
+    const { path, originalname } = request.files[i];  
+    const splitArray = originalname.split('.');
+    const ext = splitArray[splitArray.length - 1]
+    const newName = path + '.' + ext;
+    fs.renameSync(path, newName);
+    let renamedFile = newName.replace('uploads\\','');
+    uploadedFiles.push(renamedFile);
+  }
+  response.json(uploadedFiles);
 })
 
 app.listen(PORT, () => {

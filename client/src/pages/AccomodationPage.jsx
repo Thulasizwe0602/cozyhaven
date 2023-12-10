@@ -17,7 +17,7 @@ export default function AccomodationPage() {
         maxGuest: 3,
         photoLink: '',
         addedPhotos: [],
-        features:  []
+        features: []
     });
     // const [addedPhotos, setAddedPhotos] = useState([]);
     // const [features, setFeatures] = useState([]);
@@ -26,31 +26,52 @@ export default function AccomodationPage() {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
-        if(type === 'checkbox') {
+        if (type === 'checkbox') {
             setFormData((prevFormData) => ({
                 ...prevFormData,
                 features: checked
-                  ? [...prevFormData.features, value]
-                  : prevFormData.features.filter((feature) => feature !== value)
-              }));
-        }else{
+                    ? [...prevFormData.features, value]
+                    : prevFormData.features.filter((feature) => feature !== value)
+            }));
+        } else {
             setFormData((prevData) => ({ ...prevData, [name]: value }));
         }
     };
 
-    async function addPhotoByLink(event){
+    async function addPhotoByLink(event) {
         event.preventDefault();
-        const {data: fileName} = await axios.post('/uploadByLink', {imageLink : formData.photoLink});
-        if(fileName) {
+        const { data: fileName } = await axios.post('/uploadByLink', { imageLink: formData.photoLink });
+        if (fileName) {
             setFormData((prevFormData) => ({
-              ...prevFormData,
-              addedPhotos: [...prevFormData.addedPhotos, fileName],
-              photoLink: '' // Optional: Clear the photoLink input after adding to the array
+                ...prevFormData,
+                addedPhotos: [...prevFormData.addedPhotos, fileName],
+                photoLink: '' // Optional: Clear the photoLink input after adding to the array
             }));
         }
-
-        let newArry = formData.addedPhotos;
     };
+
+    async function uploadPhoto(event) {
+        event.preventDefault();
+
+        const files = event.target.files;
+        const formData = new FormData();
+
+        for (var i = 0; i < files.length; i++) {
+            formData.append('photos', files[i])
+        }
+        const { data: fileNames } = await axios.post('/uploadPhotos', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (fileNames) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                addedPhotos: [...prevFormData.addedPhotos,  ...fileNames],
+                photoLink: '' // Optional: Clear the photoLink input after adding to the array
+            }));
+
+        }
+    }
 
     return (
         <div>
@@ -95,17 +116,19 @@ export default function AccomodationPage() {
                             />
                             <button onClick={addPhotoByLink} className='bg-gray-100 px-2 rounded-2xl'>Upload&nbsp;Photo</button>
                         </div>
-                        <div className="mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                        <div className="mt-2 gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                             {formData.addedPhotos.length > 0 && formData.addedPhotos.map(imageLink => (
-                                <div>
-                                    <img src={'http://localhost:3000/uploads/' + imageLink}/>
+                                <div className="h-32 flex"key={imageLink}>
+                                    <img className="rounded-2xl w-full object-cover" src={'http://localhost:3000/uploads/' + imageLink} />
                                 </div>
                             ))}
-                            <button className='flex gap-1 justify-center border bg-transparent rounded-2xl p-6  text-2xl text-primary'>
+                            <label className='h-32 w-30 cursor-pointer flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-6  text-2xl text-primary'>
+                                <input type='file' className="hidden" multiple onChange={uploadPhoto} />
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-9">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                                 </svg>
-                                Upload</button>
+                                Upload
+                            </label>
                         </div>
                         <h2 className="text-2xl mt-4">Description</h2>
                         <textarea
@@ -115,7 +138,7 @@ export default function AccomodationPage() {
                             value={formData.description}
                             onChange={handleChange}
                         />
-                        <Features selectedFeatures={formData.features} onChange={handleChange}/>
+                        <Features selectedFeatures={formData.features} onChange={handleChange} />
                         <h2 className="text-2xl mt-4">Extra Info</h2>
                         <textarea
                             type="text"
