@@ -15,7 +15,7 @@ export default function AccountPage() {
     }
 
     async function handleSignOut() {
-        await axios.post('/signout');
+        await axios.post('user/signout');
         setRedirect('/');
         setUser(null);
     }

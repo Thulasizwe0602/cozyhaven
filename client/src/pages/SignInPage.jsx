@@ -20,7 +20,7 @@ export default function SignInPage() {
     const handleSignInUser = async (event) => {
         event.preventDefault();
         try {
-            const {data} = await axios.post('/signin', formData);
+            const {data} = await axios.post('user/signin', formData);
             setUser(data);
             setRedirect(true);
         } catch (error) {

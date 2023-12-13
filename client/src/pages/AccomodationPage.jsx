@@ -62,7 +62,7 @@ export default function AccomodationPage() {
 
     async function addPhotoByLink(event) {
         event.preventDefault();
-        const { data: fileName } = await axios.post('/uploadByLink', { imageLink: formData.photoLink });
+        const { data: fileName } = await axios.post('image/uploadByLink', { imageLink: formData.photoLink });
         if (fileName) {
             setFormData((prevFormData) => ({
                 ...prevFormData,
@@ -81,7 +81,7 @@ export default function AccomodationPage() {
         for (var i = 0; i < files.length; i++) {
             formData.append('photos', files[i])
         }
-        const { data: fileNames } = await axios.post('/uploadPhotos', formData, {
+        const { data: fileNames } = await axios.post('image/uploadPhotos', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
 
@@ -96,10 +96,10 @@ export default function AccomodationPage() {
     }
 
     async function addNewAccomodation(event){
-        event.preventDefault();        
+        event.preventDefault();
 
         try {
-            const {data} = await axios.post('/addAccomodation', formData);
+            const {data} = await axios.post('accomodation/addAccomodation', formData);
 
             if (data.data._id !== ""){
                 <Navigate to='/account/accomodations'/>

@@ -19,7 +19,7 @@ export default function SignUpPage() {
         event.preventDefault();
 
         try {
-            await axios.post('/signup', formData);
+            await axios.post('user/signup', formData);
         } catch (error) {
             console.log(error);
         }
