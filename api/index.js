@@ -10,6 +10,7 @@ const fs = require('fs');
 const imagedownloader = require('image-downloader');
 
 const User = require('./models/User.js');
+const Accomodation = require('./models/Accomodation.js');
 
 dotenv.config();
 
@@ -111,7 +112,31 @@ app.post('/uploadByLink', async (request, response) => {
     dest: imagePath
   })
   response.json(newImageName);
-})
+});
+
+app.post('/addAccomodation', async (request, response) => {
+  const { title, address,
+    description, extraInfo,
+    checkIn, checkOut,
+    maxGuest, photoLink,
+    addedPhotos, indoorFeatures,
+    outdoorFeatures } = request.body;
+
+    const { token } = request.cookies;
+    jwt.verify(token, jwtSecret, {}, async (error, cookieUserData) => {
+      if (error) {
+        throw error;
+      }
+
+      accomodationDoc = await Accomodation.create({ owner:cookieUserData.id ,title, address,
+        description, extraInfo,
+        checkIn, checkOut,
+        maxGuest, photoLink,
+        photos: addedPhotos, indoorFeatures,
+        outdoorFeatures });
+      response.status(201).json({ data : accomodationDoc, message: 'Accomodation created successfully' });
+    })
+});
 
 const photoMiddleware = multer({ dest: 'uploads/' });
 app.post('/uploadPhotos', photoMiddleware.array('photos', 100), async (request, response) => {
@@ -127,7 +152,7 @@ console.log(request.files[0]);
     uploadedFiles.push(renamedFile);
   }
   response.json(uploadedFiles);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

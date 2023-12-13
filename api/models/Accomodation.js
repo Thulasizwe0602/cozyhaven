@@ -15,7 +15,6 @@ const AccomodationSchema = new Schema({
     maxGuest:Number
 });
 
-
 const AccomodationModel = mongoose.model('Accomodation', AccomodationSchema);
 
 module.exports = AccomodationModel;

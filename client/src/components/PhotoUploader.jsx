@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PhotoUploadComponent = ({ formData, handleChange, addPhotoByLink, uploadPhoto }) => {
+const PhotoUploader = ({ formData, handleChange, addPhotoByLink, uploadPhoto }) => {
   return (
     <>
       <h2 className="text-2xl mt-4">Photos</h2>
@@ -42,4 +42,4 @@ const PhotoUploadComponent = ({ formData, handleChange, addPhotoByLink, uploadPh
   );
 };
 
-export default PhotoUploadComponent;
+export default PhotoUploader;

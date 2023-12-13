@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import IndoorFeatures from "../components/IndoorFeatures";
 import OutdoorFeatures from "../components/OutdoorFeatures";
-import PhotoUploadComponent from "../components/PhotoUploadComponent";
+import PhotoUploader from "../components/PhotoUploader";
 import axios from "axios";
 
 export default function AccomodationPage() {
@@ -12,7 +12,6 @@ export default function AccomodationPage() {
         address: '',
         description: '',
         extraInfo: '',
-        extraInfo: '',
         checkIn: '',
         checkOut: '',
         maxGuest: 3,
@@ -21,9 +20,6 @@ export default function AccomodationPage() {
         indoorFeatures: [],
         outdoorFeatures: [],
     });
-    // const [addedPhotos, setAddedPhotos] = useState([]);
-    // const [indoorFeatures, setFeatures] = useState([]);
-    //const [photoLink, setPhotoLink] = useState('');
 
     const handleChange = (e) => {
         const { name, value, type, checked, dataset } = e.target;
@@ -99,6 +95,20 @@ export default function AccomodationPage() {
         }
     }
 
+    async function addNewAccomodation(event){
+        event.preventDefault();        
+
+        try {
+            const {data} = await axios.post('/addAccomodation', formData);
+
+            if (data.data._id !== ""){
+                <Navigate to='/account/accomodations'/>
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div>
             {action !== 'new' && (
@@ -114,7 +124,7 @@ export default function AccomodationPage() {
             )}
             {action === 'new' && (
                 <div>
-                    <form>
+                    <form onSubmit={addNewAccomodation}>
                         <h2 className="text-2xl mt-4">Title</h2>
                         <input
                             type="text"
@@ -131,7 +141,7 @@ export default function AccomodationPage() {
                             value={formData.address}
                             onChange={handleChange}
                         />
-                        <PhotoUploadComponent
+                        <PhotoUploader
                           formData={formData}
                           handleChange={handleChange}
                           addPhotoByLink={addPhotoByLink}
