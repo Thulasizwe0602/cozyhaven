@@ -29,32 +29,35 @@ app.use(cors(CORS_OPTIONS));
 
 mongoose.connect(process.env.MONGO_URL);
 
-app.get('/test', (request, response) => {
-  response.json('test number ' + Math.random());
+// Test endpoint
+app.get('/test', (req, res) => {
+  res.json('test number ' + Math.random());
 });
 
-app.post('/signup', async (request, response) => {
+// User signup endpoint
+app.post('/signup', async (req, res) => {
   try {
-    const { name, email, password } = request.body;
-    if (name == '' || email == '' || password == '') {
-      response.status(500).json({ errorTitle: 'Sign up failed', errorMessage: 'Missing Information' });
+    const { name, email, password } = req.body;
+    if (name === '' || email === '' || password === '') {
+      res.status(500).json({ errorTitle: 'Sign up failed', errorMessage: 'Missing Information' });
     } else {
       const hashedPassword = await bcrypt.hashSync(password, 6);
       const userDoc = await User.create({ name, email, password: hashedPassword });
-      response.status(201).json({ data: userDoc, message: 'User created successfully' });
+      res.status(201).json({ data: userDoc, message: 'User created successfully' });
     }
   } catch (error) {
     console.error('Error during user creation:', error);
-    response.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
   }
 });
 
-app.post('/signin', async (request, response) => {
+// User signin endpoint
+app.post('/signin', async (req, res) => {
   try {
-    const { email, password } = request.body;
+    const { email, password } = req.body;
 
     if (email === '' || password === '') {
-      response.status(500).json({ errorTitle: 'Sign in failed', errorMessage: 'Missing Information' });
+      res.status(500).json({ errorTitle: 'Sign in failed', errorMessage: 'Missing Information' });
     } else {
       const userDoc = await User.findOne({ email });
       if (userDoc) {
@@ -64,94 +67,114 @@ app.post('/signin', async (request, response) => {
             if (error) {
               throw error;
             }
-            response.cookie('token', token).status(200).json({ email: userDoc.email, id: userDoc._id, name: userDoc.name });
+            res.cookie('token', token).status(200).json({ email: userDoc.email, id: userDoc._id, name: userDoc.name });
           });
         } else {
-          response.status(400).json({ message: 'Incorrect email or password!!' });
+          res.status(400).json({ message: 'Incorrect email or password!!' });
         }
       } else {
-        response.status(400).json({ message: 'No user found' });
+        res.status(400).json({ message: 'No user found' });
       }
     }
   } catch (error) {
     console.error('Error during user creation:', error);
-    response.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
   }
 });
 
-app.post('/signout', async (request, response) => {
+// User signout endpoint
+app.post('/signout', async (req, res) => {
   try {
-    response.cookie('token', '').json(true);
+    res.cookie('token', '').json(true);
   } catch (error) {
-    console.error('Error during signin out', error);
-    response.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+    console.error('Error during sign out', error);
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
   }
 });
 
-app.get('/profile', (request, response) => {
-  const { token } = request.cookies;
+// User profile endpoint
+app.get('/profile', (req, res) => {
+  const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (error, cookieUserData) => {
       if (error) {
         throw error;
       }
       const { id, name, email } = await User.findById(cookieUserData.id);
-      response.json({ id, name, email });
-    })
+      res.json({ id, name, email });
+    });
   } else {
-    response.json('null');
+    res.json('null');
   }
 });
 
-app.post('/uploadByLink', async (request, response) => {
-  const { imageLink } = request.body;
-  const newImageName = 'photo' + Date.now() + '.jpg';
-  const imagePath = __dirname + '/uploads/' + newImageName;
-  await imagedownloader.image({
-    url: imageLink,
-    dest: imagePath
-  })
-  response.json(newImageName);
+// Upload image by link endpoint
+app.post('/uploadByLink', async (req, res) => {
+  try {
+    const { imageLink } = req.body;
+    const newImageName = 'photo' + Date.now() + '.jpg';
+    const imagePath = __dirname + '/uploads/' + newImageName;
+    await imagedownloader.image({
+      url: imageLink,
+      dest: imagePath
+    });
+    res.json(newImageName);
+  } catch (error) {
+    console.error('Error during image upload by link:', error);
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+  }
 });
 
-app.post('/addAccomodation', async (request, response) => {
-  const { title, address,
-    description, extraInfo,
-    checkIn, checkOut,
-    maxGuest, photoLink,
-    addedPhotos, indoorFeatures,
-    outdoorFeatures } = request.body;
-
-    const { token } = request.cookies;
+// Add accommodation endpoint
+app.post('/addAccomodation', async (req, res) => {
+  try {
+    const { title, address, description, extraInfo, checkIn, checkOut, maxGuest, photoLink, addedPhotos, indoorFeatures, outdoorFeatures } = req.body;
+    const { token } = req.cookies;
     jwt.verify(token, jwtSecret, {}, async (error, cookieUserData) => {
       if (error) {
         throw error;
       }
-
-      accomodationDoc = await Accomodation.create({ owner:cookieUserData.id ,title, address,
-        description, extraInfo,
-        checkIn, checkOut,
-        maxGuest, photoLink,
-        photos: addedPhotos, indoorFeatures,
-        outdoorFeatures });
-      response.status(201).json({ data : accomodationDoc, message: 'Accomodation created successfully' });
-    })
+      const accomodationDoc = await Accomodation.create({
+        owner: cookieUserData.id,
+        title,
+        address,
+        description,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuest,
+        photoLink,
+        photos: addedPhotos,
+        indoorFeatures,
+        outdoorFeatures
+      });
+      res.status(201).json({ data: accomodationDoc, message: 'Accommodation created successfully' });
+    });
+  } catch (error) {
+    console.error('Error during accommodation creation:', error);
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
+  }
 });
 
+// Multer middleware for uploading photos
 const photoMiddleware = multer({ dest: 'uploads/' });
-app.post('/uploadPhotos', photoMiddleware.array('photos', 100), async (request, response) => {
-const uploadedFiles =[];
-console.log(request.files[0]);
-  for (let i = 0; i < request.files.length; i++) {
-    const { path, originalname } = request.files[i];  
-    const splitArray = originalname.split('.');
-    const ext = splitArray[splitArray.length - 1]
-    const newName = path + '.' + ext;
-    fs.renameSync(path, newName);
-    let renamedFile = newName.replace('uploads\\','');
-    uploadedFiles.push(renamedFile);
+app.post('/uploadPhotos', photoMiddleware.array('photos', 100), async (req, res) => {
+  try {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname } = req.files[i];
+      const splitArray = originalname.split('.');
+      const ext = splitArray[splitArray.length - 1];
+      const newName = path + '.' + ext;
+      fs.renameSync(path, newName);
+      const renamedFile = newName.replace('uploads\\', '');
+      uploadedFiles.push(renamedFile);
+    }
+    res.json(uploadedFiles);
+  } catch (error) {
+    console.error('Error during photo upload:', error);
+    res.status(500).json({ errorTitle: 'Internal Server Error', errorMessage: error });
   }
-  response.json(uploadedFiles);
 });
 
 app.listen(PORT, () => {
